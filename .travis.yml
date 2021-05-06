@@ -2,6 +2,16 @@ language: cpp
 sudo: true
 
 
+deploy:
+    provider: s3
+    bucket: "hipcam-kinesis-sdk-binary"
+    endpoint: "s3-website-us-west-2.amazonaws.com"
+    region: "us-east-1"
+    upload-dir: "mati-prueba"
+    skip_cleanup: true
+    secret_access_key:0sVDrqBJ5TXrwL04ULug0TbOOymyRtLCdkwaHUvA
+    access_key_id:AKIATVDFHJH3DEJ7B4JN
+    
 
 branches:
   only:
@@ -33,20 +43,7 @@ matrix:
   include:
 
 
-    - name: "OSX Clang"
-      os: osx
-      compiler: clang
-      before_script:
-        - mkdir build && cd build && cmake .. -DBUILD_TEST=TRUE -DCOMPILER_WARNINGS=TRUE
-      script:
-        - make
-        - export DYLD_LIBRARY_PATH="$DYLD_LIBRARY_PATH:`pwd`/../open-source/lib"
-        - ./tst/webrtc_client_test || travis_terminate 1;
-        # Execute selected tests without auth integration
-        - unset AWS_ACCESS_KEY_ID
-        - unset AWS_SECRET_ACCESS_KEY
-        - ./tst/webrtc_client_test --gtest_break_on_failure --gtest_filter="SignalingApiFunctionalityTest.*:SignalingApiTest.*:TurnConnectionFunctionalityTest.*"
-      after_failure: skip # timeout not available on MacOS
+
 
     # Code Coverage
     - name: "Linux GCC Code Coverage"
@@ -161,14 +158,6 @@ matrix:
         - sudo sh -c 'echo 0 > /proc/sys/net/ipv6/conf/all/disable_ipv6'
       before_script: mkdir build && cd build && cmake .. -DBUILD_TEST=TRUE -DUSE_OPENSSL=OFF -DUSE_MBEDTLS=ON
 
-    - name: "Windows MSVC"
-      os: windows
-      script:
-        - choco install nasm strawberryperl
-        - unset CC CC_FOR_BUILD CXX CXX_FOR_BUILD # We want to use MSVC
-        - export "PATH=/c/Strawberry/perl/site/bin:/c/Strawberry/perl/bin:/c/Strawberry/c/bin:/c/Program Files/NASM:`pwd`/open-source/lib:`pwd`/open-source/bin:$PATH"
-        - .github/build_windows.bat
-        - cd build/tst && ./webrtc_client_test.exe --gtest_filter="-DataChannelFunctionalityTest.*:IceApiTest.*:IceFunctionalityTest.*:PeerConnectionFunctionalityTest.*:SignalingApiFunctionalityTest.*:TurnConnectionFunctionalityTest.*:RtpFunctionalityTest.marshallUnmarshallH264Data:RtpFunctionalityTest.packingUnpackingVerifySameH264Frame:RtcpFunctionalityTest.onRtcpPacketCompound:RtcpFunctionalityTest.twcc3"
             
     - name: "Sample check"
       os: linux
