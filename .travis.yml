@@ -2,6 +2,14 @@ language: cpp
 sudo: true
 
 
+addons:
+  artifacts: true
+
+deploy:
+  provider: s3
+  access_key_id: AKIATVDFHJH3DEJ7B4JN
+  secret_access_key: 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
+  bucket: hipcam-kinesis-sdk-binary
  
 
 branches:
