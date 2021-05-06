@@ -2,11 +2,7 @@ language: cpp
 sudo: true
 
 
-addons:
-  access_key_id:"AKIATVDFHJH3DEJ7B4JN"
-  secret_access_key:"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"
-  bucket:"hipcam-kinesis-sdk-binary"
-  region: us-east-1 
+ 
 
 branches:
   only:
